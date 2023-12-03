@@ -6,6 +6,7 @@ const userController = require('../controllers/userController');
 const languageController = require('../controllers/languageController');
 const chatController = require('../controllers/chatController');
 const exerciseController = require('../controllers/exerciseController');
+const openaiController = require('../controllers/openaiController');
 
 // User Routes
 router.get('/users', userController.getAllUsers);
@@ -34,5 +35,8 @@ router.get('/exercises/:exerciseId', exerciseController.getExerciseById);
 router.post('/exercises', exerciseController.createExercise);
 router.put('/exercises/:exerciseId', exerciseController.updateExercise);
 router.delete('/exercises/:exerciseId', exerciseController.deleteExercise);
+
+router.post('/openai', openaiController.createOpenAIChat);
+router.put('/openai/:chatId', openaiController.updateOpenAIChat);
 
 module.exports = router;
