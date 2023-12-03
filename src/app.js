@@ -11,10 +11,9 @@ const PORT = process.env.PORT || 3000;
 // Connect to MongoDB
 const username = process.env.USERNAME
 const password = process.env.PASSWORD
-const dbName = process.env.DB_NAME
 
 const uri = `mongodb+srv://${username}:${password}@cluster0.tcz8xzq.mongodb.net/?retryWrites=true&w=majority`;
-console.log(uri);
+
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const db = mongoose.connection;
@@ -25,11 +24,11 @@ db.once('open', function () {
   // Now you can start using mongoose models to interact with your database
 });
 
-// // Middleware
-// app.use(express.json());
+// Middleware
+app.use(express.json());
 
-// // Routes
-// app.use('/api', apiRoutes);
+// Routes
+app.use('/api', apiRoutes);
 
 // Start the server
 app.listen(PORT, () => {
