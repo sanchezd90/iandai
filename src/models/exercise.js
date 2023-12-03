@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
-const exerciseSchema = new mongoose.Schema({
-  languageId: { type: mongoose.Schema.Types.ObjectId, ref: 'Language', required: true },
+const exerciseSchema = new mongoose.Schema({  
   name: { type: String, required: true },
   systemPrompt: { type: String, required: true },
   instructions: { type: String, required: true },
