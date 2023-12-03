@@ -1,3 +1,2 @@
 # IAndAI
 # iandai
-# iandai-next
