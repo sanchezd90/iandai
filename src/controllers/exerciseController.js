@@ -1,72 +1,73 @@
-// src/controllers/exerciseController.js
 const Exercise = require('../models/exercise');
 
+// Create a new exercise
+const createExercise = async (req, res) => {
+  try {
+    const exercise = new Exercise(req.body);
+    await exercise.save();
+    res.status(201).json(exercise);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// Get all exercises with related activity data
 const getAllExercises = async (req, res) => {
   try {
     const exercises = await Exercise.find();
-    res.json(exercises);
+    res.status(200).json(exercises);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ error: error.message });
   }
 };
 
+// Get an exercise by ID with related activity data
 const getExerciseById = async (req, res) => {
-  const { exerciseId } = req.params;
   try {
-    const exercise = await Exercise.findById(exerciseId);
+    const exercise = await Exercise.findById(req.params.exerciseId).populate('activity');
     if (!exercise) {
-      return res.status(404).json({ message: 'Exercise not found' });
+      return res.status(404).json({ error: 'Exercise not found' });
     }
-    res.json(exercise);
+    res.status(200).json(exercise);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ error: error.message });
   }
 };
 
-const createExercise = async (req, res) => {
-  try {
-    const newExercise = await Exercise.create(req.body);
-    res.status(201).json(newExercise);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-};
-
+// Update an exercise by ID
 const updateExercise = async (req, res) => {
-  const { exerciseId } = req.params;
   try {
-    const updatedExercise = await Exercise.findByIdAndUpdate(exerciseId, req.body, { new: true });
-    if (!updatedExercise) {
-      return res.status(404).json({ message: 'Exercise not found' });
+    const exercise = await Exercise.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!exercise) {
+      return res.status(404).json({ error: 'Exercise not found' });
     }
-    res.json(updatedExercise);
+    res.status(200).json(exercise);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(400).json({ error: error.message });
   }
 };
 
+// Delete an exercise by ID
 const deleteExercise = async (req, res) => {
-  const { exerciseId } = req.params;
   try {
-    const deletedExercise = await Exercise.findByIdAndDelete(exerciseId);
-    if (!deletedExercise) {
-      return res.status(404).json({ message: 'Exercise not found' });
+    const exercise = await Exercise.findByIdAndDelete(req.params.id);
+    if (!exercise) {
+      return res.status(404).json({ error: 'Exercise not found' });
     }
-    res.json({ message: 'Exercise deleted successfully' });
+    res.status(200).json({ message: 'Exercise deleted successfully' });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ error: error.message });
   }
 };
 
 module.exports = {
+  createExercise,
   getAllExercises,
   getExerciseById,
-  createExercise,
   updateExercise,
   deleteExercise,
 };
