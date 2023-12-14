@@ -15,26 +15,23 @@ const createOpenAIChat = async (req, res) => {
   ];
 
   let retryCount = 0;
-  const maxRetries = 3; // You can adjust this value based on your requirements
+  const maxRetries = 2; // You can adjust this value based on your requirements
 
   while (retryCount < maxRetries) {
     try {
       const openai = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
-      });
-
+      });      
       const response = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
         messages: messages,
-        temperature: 1.51,
-        max_tokens: 256,
+        temperature: 1.5,
+        max_tokens: 150,
         top_p: 1,
         frequency_penalty: 0,
         presence_penalty: 0,
       });      
-
-      const responseMessage = response.choices[0].message;
-      console.log(responseMessage);
+      const responseMessage = response.choices[0].message;      
       if (responseMessage.content.length > 200) {
         // Retry logic
         retryCount++;
@@ -53,14 +50,14 @@ const createOpenAIChat = async (req, res) => {
     } catch (error) {
       // Handle errors here
       console.error("Error during OpenAI API call:", error.message);
-      res.status(500).json({ message: 'Internal Server Error' });
+      res.status(500).json({ message: 'Corrupted response' });
       return; // Exit the loop on error
     }
   }
 
   // If we reach here, all retries failed
   console.error(`Failed to get a suitable response after ${maxRetries} retries`);
-  res.status(500).json({ message: 'Internal Server Error' });
+  res.status(500).json({ message: 'Failed to get a suitable response' });  
 };
 
 
