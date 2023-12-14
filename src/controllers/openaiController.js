@@ -73,7 +73,7 @@ const updateOpenAIChat = async (req, res) => {
       model: "gpt-3.5-turbo",
       messages: messages.map(message=>{return {role:message.role,content:message.content}}),
       temperature: 1.51,
-      max_tokens: 256,
+      max_tokens: 350,
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 0,
