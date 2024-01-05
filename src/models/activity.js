@@ -17,6 +17,10 @@ const activitySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  requires_user_input: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 const Activity = mongoose.model('Activity', activitySchema);
