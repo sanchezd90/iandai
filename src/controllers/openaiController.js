@@ -60,7 +60,6 @@ const createOpenAIChat = async (req, res) => {
   res.status(500).json({ message: 'Failed to get a suitable response' });  
 };
 
-
 const updateOpenAIChat = async (req, res) => {             
   const { messages } = req.body  
   const { chatId } = req.params
@@ -87,8 +86,34 @@ const updateOpenAIChat = async (req, res) => {
   }
 };
 
+const getHelp = async (req, res) => {             
+  const { message } = req.body  
+  try {
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [message],
+      temperature: 1.51,
+      max_tokens: 350,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+    });           
+    if (response.choices?.[0]?.message) {      
+      res.json(response.choices[0].message);
+    }
+  } catch (error) {
+    // Handle errors here
+    console.error("Error during OpenAI API call:", error.message);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 
 module.exports = {
     createOpenAIChat,
-    updateOpenAIChat
+    updateOpenAIChat,
+    getHelp
   };

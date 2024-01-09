@@ -47,5 +47,6 @@ router.delete('/activities/:id', activityController.deleteActivity);
 
 router.post('/openai', openaiController.createOpenAIChat);
 router.put('/openai/:chatId', openaiController.updateOpenAIChat);
+router.post('/openai/help', openaiController.getHelp);
 
 module.exports = router;
