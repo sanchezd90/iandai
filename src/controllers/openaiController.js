@@ -2,6 +2,7 @@
 const OpenAI = require("openai");
 const dotenv = require('dotenv');
 const chatController = require('../controllers/chatController');
+const {csvToObjectArray} = require('../utils/common')
 
 dotenv.config();
 
@@ -87,7 +88,7 @@ const updateOpenAIChat = async (req, res) => {
 };
 
 const getHelp = async (req, res) => {             
-  const { message } = req.body  
+  const { message,type } = req.body  
   try {
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
@@ -102,8 +103,18 @@ const getHelp = async (req, res) => {
       frequency_penalty: 0,
       presence_penalty: 0,
     });           
-    if (response.choices?.[0]?.message) {      
-      res.json(response.choices[0].message);
+    if (response.choices?.[0]?.message) {
+      if(type==='words'){
+        const wordsObject = csvToObjectArray(response?.choices?.[0]?.message.content)        
+        if(!wordsObject) {
+          console.log('invalid response');
+          res.status(500).json({ message: 'Failed to get a suitable response' });
+        }else{
+          res.json(wordsObject)
+        }
+      }else{
+        res.json(response.choices[0].message.content);
+      }      
     }
   } catch (error) {
     // Handle errors here
