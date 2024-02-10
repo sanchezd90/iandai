@@ -1,7 +1,7 @@
 // src/controllers/userController.js
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
+require('dotenv').config();
 
 const getAllUsers = async (req, res) => {
   try {
@@ -65,15 +65,7 @@ const deleteUser = async (req, res) => {
   }
 };
 
-let jwtSecretKey = null;
-
-const initializeJwtSecretKey = () => {
-  // Generate a random secret key using the crypto module
-  jwtSecretKey = crypto.randomBytes(32).toString('hex');
-};
-
-// Initialize the JWT secret key when the application starts
-initializeJwtSecretKey();
+let jwtSecretKey = process.env.JWT_SECRET_KEY
 
 const loginOrCreateUser = async (req, res) => {
   const { email } = req.body;

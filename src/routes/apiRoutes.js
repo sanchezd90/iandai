@@ -29,6 +29,7 @@ router.delete('/languages/:languageId', languageController.deleteLanguage);
 router.get('/chats', chatController.getAllChats);
 router.get('/chats/:chatId', chatController.getChatById);
 router.post('/chats', chatController.createChat);
+router.post('/chats/user', chatController.getAllChatsForUser);
 router.put('/chats/:chatId', chatController.updateChat);
 router.delete('/chats/:chatId', chatController.deleteChat);
 

@@ -1,4 +1,8 @@
 // src/controllers/chatController.js
+const jwt = require('jsonwebtoken'); // Import the JSON Web Token library
+const { promisify } = require('util'); // Import the 'promisify' function from the 'util' module
+require('dotenv').config();
+
 const Chat = require('../models/chat');
 
 const getAllChats = async (req, res) => {
@@ -63,10 +67,39 @@ const deleteChat = async (req, res) => {
   }
 };
 
+let jwtSecretKey = process.env.JWT_SECRET_KEY
+
+const verifyJwt = promisify(jwt.verify);
+
+
+const getAllChatsForUser = async (req, res) => {
+  const authHeader = req.headers.authorization;
+  
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Unauthorized - Bearer token missing' });
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  try {
+    const decoded = await verifyJwt(token, jwtSecretKey);    
+    const userId = decoded.userId;    
+    const chats = await Chat.find({ userId });
+
+    res.json(chats);
+  } catch (error) {
+    console.error(error);
+    res.status(401).json({ message: 'Unauthorized - Invalid token' });
+  }
+};
+
+
+
 module.exports = {
   getAllChats,
   getChatById,
   createChat,
   updateChat,
   deleteChat,
+  getAllChatsForUser
 };
