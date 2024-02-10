@@ -1,5 +1,7 @@
 // src/controllers/userController.js
 const User = require('../models/user');
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 const getAllUsers = async (req, res) => {
   try {
@@ -63,10 +65,56 @@ const deleteUser = async (req, res) => {
   }
 };
 
+let jwtSecretKey = null;
+
+const initializeJwtSecretKey = () => {
+  // Generate a random secret key using the crypto module
+  jwtSecretKey = crypto.randomBytes(32).toString('hex');
+};
+
+// Initialize the JWT secret key when the application starts
+initializeJwtSecretKey();
+
+const loginOrCreateUser = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Check if the user with the provided email exists
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      // User already exists, send JWT token
+      const token = generateJwtToken(existingUser);
+      res.json({ message: 'Login successful', token });
+    } else {
+      // User doesn't exist, create a new user
+      const newUser = await User.create(req.body);
+
+      // Send JWT token for the newly created user
+      const token = generateJwtToken(newUser);
+      res.status(201).json({ message: 'User created successfully', token });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+const generateJwtToken = (user) => {
+  if (!jwtSecretKey) {
+    console.error('JWT secret key is not initialized.');
+    return null;
+  }
+
+  // Sign the JWT token using the dynamic secret key
+  const token = jwt.sign({ userId: user._id, email:user.email }, jwtSecretKey, { expiresIn: '1h' });
+  return token;
+};
 module.exports = {
   getAllUsers,
   getUserById,
   createUser,
   updateUser,
   deleteUser,
+  loginOrCreateUser
 };

@@ -16,6 +16,7 @@ router.get('/users/:userId', userController.getUserById);
 router.post('/users', userController.createUser);
 router.put('/users/:userId', userController.updateUser);
 router.delete('/users/:userId', userController.deleteUser);
+router.post('/users/auth', userController.loginOrCreateUser);
 
 // Language Routes
 router.get('/languages', languageController.getAllLanguages);
